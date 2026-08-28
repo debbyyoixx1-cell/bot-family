@@ -73,8 +73,8 @@
       }
       nav ul {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
         list-style: none;
         margin: 0;
         padding: 8px;
@@ -136,6 +136,46 @@
       .hidden {
         display: none;
       }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        background: var(--frame);
+        border-radius: 18px;
+        text-decoration: none;
+        color: var(--ink);
+        backdrop-filter: blur(1px);
+      }
+      .card:active {
+        transform: scale(0.96);
+      }
+      .card img {
+        width: 104px;
+        height: 104px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(255, 255, 255, 0.9);
+      }
+      .card span {
+        display: block;
+        width: 100%;
+        padding: 9px 4px;
+        text-align: center;
+        font-family: system-ui, sans-serif;
+        font-weight: 800;
+        font-size: 16px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #35d0e8, #6f5bf0, #d94ce0);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+      }
     </style>
   </head>
   <body>
@@ -148,6 +188,7 @@
           <li><a href="#group" data-tab="group">Group</a></li>
           <li><a href="#channel" data-tab="channel">Channel</a></li>
           <li><a href="#bot" data-tab="bot">Bot</a></li>
+          <li><a href="#contact" data-tab="contact">Contact</a></li>
         </ul>
       </nav>
     </header>
@@ -188,6 +229,23 @@
             ["Spam Wiper Bot", "SpamWiper_bot"],
           ].map(([name, u]) => ({ name, href: "https://t.me/" + u + "?start=start" })),
         },
+        contact: {
+          title: "Contact",
+          cards: true,
+          items: [
+            ["Debby Yoixx", "Debby_Yoixx", "debby"],
+            ["THU THU", "HsuDarlilinn", "thu"],
+            ["Stitch", "stitch_n0_counter", "stitch"],
+            ["NeKo", "Kick997", "neko"],
+            ["Cherry Ko", "CherryKoOfficial", "cherry"],
+            ["\u1019\u103c\u1010\u103a\u1016\u102f\u1014\u103a\u1038", "Myat7876", "myat"],
+            ["XM \u2022| Zain", "Zain_Coner", "zain"],
+          ].map(([name, u, img]) => ({
+            name,
+            href: "https://t.me/" + u,
+            img: "assets/contacts/" + img + ".jpg",
+          })),
+        },
       };
 
       function render() {
@@ -207,6 +265,26 @@
         titleBox.hidden = false;
         titleBox.querySelector("h1").textContent = page.title;
         document.title = page.title + " — Bot Family";
+        if (page.cards) {
+          list.innerHTML =
+            '<div class="cards">' +
+            page.items
+              .map(
+                (i) =>
+                  '<a class="card" target="_blank" rel="noopener noreferrer" href="' +
+                  i.href +
+                  '"><img loading="lazy" src="' +
+                  i.img +
+                  '" alt="' +
+                  i.name +
+                  '"><span>' +
+                  i.name +
+                  "</span></a>",
+              )
+              .join("") +
+            "</div>";
+          return;
+        }
         list.innerHTML = page.items
           .map(
             (i) =>
