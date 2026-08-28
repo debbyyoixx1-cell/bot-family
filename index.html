@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bot Family — Telegram Groups, Channels &amp; Bots</title>
+    <meta
+      name="description"
+      content="Bot Family hub: join our Telegram groups and channels, and start our music, reply and utility bots."
+    />
+    <meta property="og:title" content="Bot Family — Telegram Groups, Channels &amp; Bots" />
+    <meta
+      property="og:description"
+      content="Join Bot Family Telegram groups and channels, and start our bots."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="favicon.ico" />
+    <style>
+      :root {
+        --ink: #fff;
+        --frame: rgba(255, 255, 255, 0.18);
+        --item: rgba(214, 68, 40, 0.62);
+        --item-border: rgba(196, 40, 26, 0.85);
+        --action: rgba(88, 52, 132, 0.62);
+        --action-border: rgba(50, 70, 200, 0.9);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        padding: 16px 12px 48px;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--ink);
+        background: url("assets/wood-bg.jpg") center / cover repeat-y;
+      }
+      .sign {
+        position: fixed;
+        left: 50%;
+        top: 33%;
+        width: 85%;
+        max-width: 420px;
+        transform: translateX(-50%) rotate(-62deg);
+        opacity: 0.9;
+        pointer-events: none;
+        user-select: none;
+        z-index: 0;
+      }
+      header,
+      main {
+        position: relative;
+        z-index: 1;
+        max-width: 460px;
+        margin: 0 auto;
+      }
+      h1 {
+        margin: 0;
+        font-size: 34px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      }
+      .panel {
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        background: var(--frame);
+        border-radius: 16px;
+        backdrop-filter: blur(1px);
+      }
+      .title {
+        padding: 14px;
+        text-align: center;
+        margin-bottom: 12px;
+      }
+      nav ul {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        list-style: none;
+        margin: 0;
+        padding: 8px;
+      }
+      nav a {
+        display: block;
+        padding: 10px 4px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--ink);
+        text-decoration: none;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 12px;
+      }
+      nav a:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      nav a.active {
+        background: rgba(255, 255, 255, 0.28);
+      }
+      main {
+        margin-top: 24px;
+      }
+      .row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 16px;
+        align-items: stretch;
+      }
+      .row .name {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        font-family: system-ui, sans-serif;
+        font-weight: 600;
+        border: 1px solid var(--item-border);
+        background: var(--item);
+        border-radius: 12px;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      }
+      .row .btn {
+        width: 112px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--ink);
+        text-decoration: none;
+        border: 2px solid var(--action-border);
+        background: var(--action);
+        border-radius: 12px;
+      }
+      .row .btn:active {
+        transform: scale(0.96);
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <img class="sign" src="assets/sign.png" alt="" aria-hidden="true" />
+
+    <header>
+      <div class="panel title" id="pageTitle" hidden><h1></h1></div>
+      <nav class="panel" aria-label="Main">
+        <ul>
+          <li><a href="#group" data-tab="group">Group</a></li>
+          <li><a href="#channel" data-tab="channel">Channel</a></li>
+          <li><a href="#bot" data-tab="bot">Bot</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="list"></main>
+
+    <script>
+      const data = {
+        group: {
+          title: "Group",
+          action: "Join",
+          items: [
+            { name: "Heartopia", href: "https://t.me/HeartopiaGroups" },
+            { name: "The Bot bar family", href: "https://t.me/Cherry_Ko_official" },
+            { name: "My Day Family", href: "https://t.me/MyDayFamily" },
+            { name: "𝟏𝟖+ 𝐒𝐩𝐢𝐜𝐲 𝐋𝐨𝐮𝐧𝐠𝐞", href: "https://t.me/+wEcM_BMzYaVmYWM9" },
+          ],
+        },
+        channel: {
+          title: "Channel",
+          action: "Join",
+          items: [
+            { name: "Group အရောင် Channel", href: "https://t.me/+g5K2qSQ23rVjZDVl" },
+            { name: "Bot family", href: "https://t.me/Bots_Family2026" },
+          ],
+        },
+        bot: {
+          title: "Bot",
+          action: "Start",
+          items: [
+            ["Cherry Ko Music Bot", "CherryKoMusicBot"],
+            ["Cherry Ko Reply Bot", "Cherry_KoBot"],
+            ["Debby yoixx Reply Bot", "Debby_YoixxBot"],
+            ["Victoria Reply Bot", "Victoria_MMBot"],
+            ["မဂ္ဂဒီပါ Reply Bot", "Dorothy_Ai2026Bot"],
+            ["New Friends For You Bot", "leomatch_globalbot"],
+            ["Yoon May 18+ Chat Girl Bot", "YoonMayReplyBot"],
+            ["Spam Wiper Bot", "SpamWiper_bot"],
+          ].map(([name, u]) => ({ name, href: "https://t.me/" + u + "?start=start" })),
+        },
+      };
+
+      function render() {
+        const key = location.hash.replace("#", "") || "group";
+        const list = document.getElementById("list");
+        const titleBox = document.getElementById("pageTitle");
+        document
+          .querySelectorAll("nav a")
+          .forEach((a) => a.classList.toggle("active", a.dataset.tab === key));
+
+        const page = data[key];
+        if (!page) {
+          titleBox.hidden = true;
+          list.innerHTML = "";
+          return;
+        }
+        titleBox.hidden = false;
+        titleBox.querySelector("h1").textContent = page.title;
+        document.title = page.title + " — Bot Family";
+        list.innerHTML = page.items
+          .map(
+            (i) =>
+              '<div class="row"><div class="name">' +
+              i.name +
+              '</div><a class="btn" target="_blank" rel="noopener noreferrer" href="' +
+              i.href +
+              '">' +
+              page.action +
+              "</a></div>",
+          )
+          .join("");
+      }
+
+      window.addEventListener("hashchange", render);
+      render();
+    </script>
+  </body>
+</html>
