@@ -333,8 +333,15 @@
 
       const menuBtn = document.getElementById("menuBtn");
       const menuList = document.getElementById("menuList");
-      menuBtn.addEventListener("click", () => menuList.classList.toggle("hidden"));
+      const menuWrap = document.querySelector(".menu-wrap");
+      menuBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menuList.classList.toggle("hidden");
+      });
       menuList.addEventListener("click", () => menuList.classList.add("hidden"));
+      document.addEventListener("click", (e) => {
+        if (!menuWrap.contains(e.target)) menuList.classList.add("hidden");
+      });
 
       const tg = window.Telegram && window.Telegram.WebApp;
       if (tg) {
