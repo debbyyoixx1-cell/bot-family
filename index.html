@@ -17,6 +17,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="favicon.ico" />
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <style>
       :root {
         --ink: #fff;
@@ -252,6 +253,7 @@
     </style>
   </head>
   <body>
+    <div id="adGate" style="position:fixed;inset:0;z-index:999;background:rgba(20,12,5,0.96);display:flex;align-items:center;justify-content:center;color:#f5e6c8;font-size:18px;text-align:center;padding:20px;">Loading&hellip;</div>
     <img class="sign" src="assets/sign.png" alt="" aria-hidden="true" />
 
     <div class="menu-wrap">
@@ -432,6 +434,33 @@
 
       window.addEventListener("hashchange", render);
       render();
+
+      // Adsgram interstitial: show an ad before revealing the site (Mini App only)
+      function revealSite() {
+        const gate = document.getElementById("adGate");
+        if (gate) gate.remove();
+      }
+      (function showAdThenReveal() {
+        let revealed = false;
+        const done = () => {
+          if (revealed) return;
+          revealed = true;
+          revealSite();
+        };
+        setTimeout(done, 8000); // never trap the user
+        if (!tg || !window.Adsgram) {
+          done();
+          return;
+        }
+        try {
+          const ad = window.Adsgram.init({ blockId: "int-45189" });
+          ad.show()
+            .then(done)
+            .catch(done);
+        } catch (e) {
+          done();
+        }
+      })();
     </script>
   </body>
 </html>
