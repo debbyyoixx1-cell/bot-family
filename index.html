@@ -170,6 +170,9 @@
         display: grid;
         gap: 8px;
       }
+      .menu-list.hidden {
+        display: none;
+      }
       .menu-list a {
         display: block;
         padding: 10px 14px;
@@ -257,7 +260,7 @@
     <img class="sign" src="assets/sign.png" alt="" aria-hidden="true" />
 
     <div class="menu-wrap">
-      <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu">
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menuList">
         <span></span><span></span>
       </button>
       <div class="menu-list hidden" id="menuList">
@@ -338,11 +341,16 @@
       const menuWrap = document.querySelector(".menu-wrap");
       menuBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        menuList.classList.toggle("hidden");
+        const isHidden = menuList.classList.toggle("hidden");
+        menuBtn.setAttribute("aria-expanded", String(!isHidden));
       });
-      menuList.addEventListener("click", () => menuList.classList.add("hidden"));
+      function closeMenu() {
+        menuList.classList.add("hidden");
+        menuBtn.setAttribute("aria-expanded", "false");
+      }
+      menuList.addEventListener("click", closeMenu);
       document.addEventListener("click", (e) => {
-        if (!menuWrap.contains(e.target)) menuList.classList.add("hidden");
+        if (!menuWrap.contains(e.target)) closeMenu();
       });
 
       const tg = window.Telegram && window.Telegram.WebApp;
@@ -435,7 +443,8 @@
       window.addEventListener("hashchange", render);
       render();
 
-      // Adsgram interstitial: show an ad before revealing the site (Mini App only)
+       // Adsgram interstitial: request an ad before revealing the site (Mini App only).
+       // A rejected request (including temporarily unavailable inventory) is not an app error.
       function revealSite() {
         const gate = document.getElementById("adGate");
         if (gate) gate.remove();
@@ -447,17 +456,25 @@
           revealed = true;
           revealSite();
         };
-        setTimeout(done, 8000); // never trap the user
+         const safetyTimer = setTimeout(done, 8000); // never trap the user
         if (!tg || !window.Adsgram) {
+           clearTimeout(safetyTimer);
           done();
           return;
         }
         try {
           const ad = window.Adsgram.init({ blockId: "int-45189" });
           ad.show()
-            .then(done)
-            .catch(done);
+             .then(() => {
+               clearTimeout(safetyTimer);
+               done();
+             })
+             .catch(() => {
+               clearTimeout(safetyTimer);
+               done();
+             });
         } catch (e) {
+           clearTimeout(safetyTimer);
           done();
         }
       })();
