@@ -162,7 +162,7 @@
         width: 32px;
         height: 6px;
         border-radius: 3px;
-        background: #000;
+        background: var(--ink);
       }
       .menu-list {
         margin-top: 8px;
@@ -256,7 +256,7 @@
     </style>
   </head>
   <body>
-    <div id="adGate" style="position:fixed;inset:0;z-index:999;background:rgba(20,12,5,0.96);display:flex;align-items:center;justify-content:center;color:#f5e6c8;font-size:18px;text-align:center;padding:20px;">Loading&hellip;</div>
+    <div id="adGate" style="position:fixed;inset:0;z-index:999;background:rgba(20,12,5,0.96);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#f5e6c8;font-size:18px;text-align:center;padding:20px;">Loading&hellip;<br><button onclick="revealSite()" style="margin-top:20px;background:transparent;border:1px solid #f5e6c8;color:#f5e6c8;padding:4px 12px;border-radius:8px;font-size:14px;cursor:pointer;opacity:0.6;">Skip</button></div>
     <img class="sign" src="assets/sign.png" alt="" aria-hidden="true" />
 
     <div class="menu-wrap">
@@ -441,6 +441,7 @@
       }
 
       window.addEventListener("hashchange", render);
+      window.addEventListener("hashchange", closeMenu);
       render();
 
        // Adsgram interstitial: request an ad before revealing the site (Mini App only).
@@ -456,14 +457,14 @@
           revealed = true;
           revealSite();
         };
-         const safetyTimer = setTimeout(done, 8000); // never trap the user
-        if (!tg || !window.Adsgram) {
+         const safetyTimer = setTimeout(done, 2000); // never trap the user
+        if (!tg || !tg.initData || !window.Adsgram) {
            clearTimeout(safetyTimer);
           done();
           return;
         }
         try {
-          const ad = window.Adsgram.init({ blockId: "int-45189" });
+          const ad = window.Adsgram.init({ blockId: "int-45683" });
           ad.show()
              .then(() => {
                clearTimeout(safetyTimer);
