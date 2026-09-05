@@ -379,6 +379,26 @@
         } catch (e) {}
       }
 
+      // Open Telegram (t.me / tg://) links directly inside Telegram instead of
+      // showing the "Open Link" confirmation sheet that exposes the full URL.
+      function openTelegramLink(href) {
+        if (tg && typeof tg.openTelegramLink === "function") {
+          tg.openTelegramLink(href);
+        } else {
+          window.open(href, "_blank", "noopener,noreferrer");
+        }
+      }
+      document.addEventListener("click", (e) => {
+        var a = e.target.closest && e.target.closest("a");
+        if (!a) return;
+        var href = a.getAttribute("href") || "";
+        if (href.indexOf("https://t.me/") === 0 || href.indexOf("tg://") === 0) {
+          e.preventDefault();
+          e.stopPropagation();
+          openTelegramLink(href);
+        }
+      });
+
       function renderProfile(list) {
         const u = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || null;
         const name = u ? [u.first_name, u.last_name].filter(Boolean).join(" ") : "name";
