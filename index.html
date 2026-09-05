@@ -252,6 +252,58 @@
         background: linear-gradient(90deg, #35d0e8, #6f5bf0, #d94ce0);
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
       }
+      .post {
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        background: var(--frame);
+        border-radius: 18px;
+        backdrop-filter: blur(1px);
+      }
+      .post .post-img {
+        width: 100%;
+        border-radius: 14px;
+        display: block;
+      }
+      .post .post-text {
+        margin: 14px 4px;
+        font-size: 17px;
+        line-height: 1.7;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        white-space: pre-line;
+      }
+      .reactions {
+        display: flex;
+        justify-content: space-around;
+        gap: 8px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.4);
+      }
+      .react-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+      }
+      .react-btn img {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+      }
+      .react-btn:active {
+        transform: scale(0.9);
+      }
+      .react-btn .count {
+        font-family: system-ui, sans-serif;
+        font-weight: 800;
+        font-size: 15px;
+        color: var(--ink);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      }
     </style>
   </head>
   <body>
@@ -264,6 +316,7 @@
       <div class="menu-list hidden" id="menuList">
         <a href="#group">Home</a>
         <a href="#profile">My Profile</a>
+        <a href="#post">Post</a>
       </div>
     </div>
 
@@ -418,11 +471,66 @@
           "</div>";
       }
 
+      const POST_TEXT =
+        "လူကြီးမင်းတို့ရဲ့ Telegram Group များကို အသုံးမလိုတော့လို့ ပြန်ရောင်းချင်တယ်ဆို ကျွန်မတို့ကို ဆက်သွယ်ပေးပါရှင့်....။\n\nကျွန်မတို့ရဲ့ Group တွေကိုလည်း ယုံကြည်စိတ်ချစွာဝယ်ယူနိုင်ပါတယ်ရှင့်....။";
+      const REACTS = [
+        ["like", "assets/post/react-like.png", "Like"],
+        ["love", "assets/post/react-love.png", "Love"],
+        ["laugh", "assets/post/react-laugh.png", "Haha"],
+        ["bot", "assets/post/react-bot.png", "Bot"],
+      ];
+      function reactStoreKey() {
+        const u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+        return "bf_reacts_" + (u && u.id ? u.id : "guest");
+      }
+      function loadReacts() {
+        try {
+          return Object.assign(
+            { like: 0, love: 0, laugh: 0, bot: 0 },
+            JSON.parse(localStorage.getItem(reactStoreKey()) || "{}"),
+          );
+        } catch (e) {
+          return { like: 0, love: 0, laugh: 0, bot: 0 };
+        }
+      }
+      function renderPost(list) {
+        const counts = loadReacts();
+        list.innerHTML =
+          '<div class="post">' +
+          '<img class="post-img" src="assets/post/post-group.jpg" alt="Telegram Group">' +
+          '<p class="post-text">' + POST_TEXT + "</p>" +
+          '<div class="reactions">' +
+          REACTS.map(
+            ([k, img, label]) =>
+              '<button class="react-btn" type="button" data-react="' + k + '" aria-label="' + label + '">' +
+              '<img src="' + img + '" alt="' + label + '">' +
+              '<span class="count" id="count-' + k + '">' + counts[k] + "</span></button>",
+          ).join("") +
+          "</div></div>";
+        list.querySelectorAll(".react-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const k = btn.dataset.react;
+            const c = loadReacts();
+            c[k] = (c[k] || 0) + 1;
+            try { localStorage.setItem(reactStoreKey(), JSON.stringify(c)); } catch (e) {}
+            document.getElementById("count-" + k).textContent = c[k];
+          });
+        });
+      }
+
       function render() {
         const key = location.hash.replace("#", "") || "group";
         const list = document.getElementById("list");
         const titleBox = document.getElementById("pageTitle");
         const mainNav = document.getElementById("mainNav");
+        if (key === "post") {
+          mainNav.classList.add("hidden");
+          titleBox.hidden = false;
+          titleBox.querySelector("h1").textContent = "Post";
+          document.title = "Post — Bot Family";
+          renderPost(list);
+          return;
+        }
         if (key === "profile") {
           mainNav.classList.add("hidden");
           titleBox.hidden = true;
