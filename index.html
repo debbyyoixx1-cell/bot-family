@@ -271,39 +271,6 @@
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
         white-space: pre-line;
       }
-      .reactions {
-        display: flex;
-        justify-content: space-around;
-        gap: 8px;
-        padding-top: 8px;
-        border-top: 1px solid rgba(255, 255, 255, 0.4);
-      }
-      .react-btn {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 4px;
-      }
-      .react-btn img {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.9);
-      }
-      .react-btn:active {
-        transform: scale(0.9);
-      }
-      .react-btn .count {
-        font-family: system-ui, sans-serif;
-        font-weight: 800;
-        font-size: 15px;
-        color: var(--ink);
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-      }
     </style>
   </head>
   <body>
@@ -445,6 +412,14 @@
         var a = e.target.closest && e.target.closest("a");
         if (!a) return;
         var href = a.getAttribute("href") || "";
+        // Internal hash links (tab navigation): navigate ourselves so
+        // Telegram's webview never shows its link sheet with the full URL.
+        if (href.charAt(0) === "#") {
+          e.preventDefault();
+          e.stopPropagation();
+          location.hash = href;
+          return;
+        }
         if (href.indexOf("https://t.me/") === 0 || href.indexOf("tg://") === 0) {
           e.preventDefault();
           e.stopPropagation();
@@ -473,49 +448,12 @@
 
       const POST_TEXT =
         "လူကြီးမင်းတို့ရဲ့ Telegram Group များကို အသုံးမလိုတော့လို့ ပြန်ရောင်းချင်တယ်ဆို ကျွန်မတို့ကို ဆက်သွယ်ပေးပါရှင့်....။\n\nကျွန်မတို့ရဲ့ Group တွေကိုလည်း ယုံကြည်စိတ်ချစွာဝယ်ယူနိုင်ပါတယ်ရှင့်....။";
-      const REACTS = [
-        ["like", "assets/post/react-like.png", "Like"],
-        ["love", "assets/post/react-love.png", "Love"],
-        ["laugh", "assets/post/react-laugh.png", "Haha"],
-        ["bot", "assets/post/react-bot.png", "Bot"],
-      ];
-      function reactStoreKey() {
-        const u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
-        return "bf_reacts_" + (u && u.id ? u.id : "guest");
-      }
-      function loadReacts() {
-        try {
-          return Object.assign(
-            { like: 0, love: 0, laugh: 0, bot: 0 },
-            JSON.parse(localStorage.getItem(reactStoreKey()) || "{}"),
-          );
-        } catch (e) {
-          return { like: 0, love: 0, laugh: 0, bot: 0 };
-        }
-      }
       function renderPost(list) {
-        const counts = loadReacts();
         list.innerHTML =
           '<div class="post">' +
           '<img class="post-img" src="assets/post/post-group.jpg" alt="Telegram Group">' +
           '<p class="post-text">' + POST_TEXT + "</p>" +
-          '<div class="reactions">' +
-          REACTS.map(
-            ([k, img, label]) =>
-              '<button class="react-btn" type="button" data-react="' + k + '" aria-label="' + label + '">' +
-              '<img src="' + img + '" alt="' + label + '">' +
-              '<span class="count" id="count-' + k + '">' + counts[k] + "</span></button>",
-          ).join("") +
-          "</div></div>";
-        list.querySelectorAll(".react-btn").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const k = btn.dataset.react;
-            const c = loadReacts();
-            c[k] = (c[k] || 0) + 1;
-            try { localStorage.setItem(reactStoreKey(), JSON.stringify(c)); } catch (e) {}
-            document.getElementById("count-" + k).textContent = c[k];
-          });
-        });
+          "</div>";
       }
 
       function render() {
