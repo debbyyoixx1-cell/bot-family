@@ -15,6 +15,12 @@
     />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="referrer" content="no-referrer" />
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://telegram.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors https://web.telegram.org https://*.telegram.org"
+    />
     <link rel="icon" href="favicon.ico" />
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -80,21 +86,24 @@
         margin: 0;
         padding: 8px;
       }
-      nav a {
+      nav button {
         display: block;
+        width: 100%;
         padding: 10px 4px;
         text-align: center;
         font-weight: 700;
         font-size: 14px;
+        font-family: inherit;
         color: var(--ink);
-        text-decoration: none;
         border: 1px solid rgba(255, 255, 255, 0.8);
         border-radius: 12px;
+        background: transparent;
+        cursor: pointer;
       }
-      nav a:hover {
+      nav button:hover {
         background: rgba(255, 255, 255, 0.2);
       }
-      nav a.active {
+      nav button.active {
         background: rgba(255, 255, 255, 0.28);
       }
       main {
@@ -172,16 +181,18 @@
       .menu-list.hidden {
         display: none;
       }
-      .menu-list a {
+      .menu-list button {
         display: block;
+        width: 100%;
         padding: 10px 14px;
         text-align: center;
         font-weight: 700;
+        font-family: inherit;
         color: #000;
         background: #fff;
         border: 2px solid #000;
         border-radius: 999px;
-        text-decoration: none;
+        cursor: pointer;
       }
       .profile {
         display: flex;
@@ -281,9 +292,9 @@
         <span></span><span></span>
       </button>
       <div class="menu-list hidden" id="menuList">
-        <a href="#group">Home</a>
-        <a href="#profile">My Profile</a>
-        <a href="#post">Post</a>
+        <button type="button" data-page="group">Home</button>
+        <button type="button" data-page="profile">My Profile</button>
+        <button type="button" data-page="post">Post</button>
       </div>
     </div>
 
@@ -291,10 +302,10 @@
       <div class="panel title" id="pageTitle" hidden><h1></h1></div>
       <nav class="panel" id="mainNav" aria-label="Main">
         <ul>
-          <li><a href="#group" data-tab="group">Group</a></li>
-          <li><a href="#channel" data-tab="channel">Channel</a></li>
-          <li><a href="#bot" data-tab="bot">Bot</a></li>
-          <li><a href="#contact" data-tab="contact">Contact</a></li>
+          <li><button type="button" data-page="group" data-tab="group">Group</button></li>
+          <li><button type="button" data-page="channel" data-tab="channel">Channel</button></li>
+          <li><button type="button" data-page="bot" data-tab="bot">Bot</button></li>
+          <li><button type="button" data-page="contact" data-tab="contact">Contact</button></li>
         </ul>
       </nav>
     </header>
@@ -386,7 +397,6 @@
         menuList.classList.add("hidden");
         menuBtn.setAttribute("aria-expanded", "false");
       }
-      menuList.addEventListener("click", closeMenu);
       document.addEventListener("click", (e) => {
         if (!menuWrap.contains(e.target)) closeMenu();
       });
@@ -409,23 +419,29 @@
         }
       }
       document.addEventListener("click", (e) => {
+        var pageButton = e.target.closest && e.target.closest("button[data-page]");
+        if (pageButton) {
+          e.preventDefault();
+          e.stopPropagation();
+          currentPage = pageButton.dataset.page || "group";
+          history.replaceState({ page: currentPage }, "", location.pathname + location.search);
+          closeMenu();
+          render();
+          return;
+        }
         var a = e.target.closest && e.target.closest("a");
         if (!a) return;
         var href = a.getAttribute("href") || "";
-        // Internal hash links (tab navigation): navigate ourselves so
-        // Telegram's webview never shows its link sheet with the full URL.
-        if (href.charAt(0) === "#") {
-          e.preventDefault();
-          e.stopPropagation();
-          location.hash = href;
-          return;
-        }
         if (href.indexOf("https://t.me/") === 0 || href.indexOf("tg://") === 0) {
           e.preventDefault();
           e.stopPropagation();
           openTelegramLink(href);
         }
       });
+
+      // Disable long-press link previews and image dragging inside the Mini App.
+      document.addEventListener("contextmenu", (e) => e.preventDefault());
+      document.addEventListener("dragstart", (e) => e.preventDefault());
 
       function renderProfile(list) {
         const u = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || null;
@@ -456,8 +472,12 @@
           "</div>";
       }
 
+      const initialHash = location.hash.replace("#", "");
+      let currentPage = data[initialHash] || initialHash === "profile" || initialHash === "post" ? initialHash : "group";
+      if (location.hash) history.replaceState({ page: currentPage }, "", location.pathname + location.search);
+
       function render() {
-        const key = location.hash.replace("#", "") || "group";
+        const key = currentPage;
         const list = document.getElementById("list");
         const titleBox = document.getElementById("pageTitle");
         const mainNav = document.getElementById("mainNav");
@@ -478,7 +498,7 @@
         }
         mainNav.classList.remove("hidden");
         document
-          .querySelectorAll("nav a")
+          .querySelectorAll("nav button")
           .forEach((a) => a.classList.toggle("active", a.dataset.tab === key));
 
         const page = data[key];
@@ -524,8 +544,11 @@
           .join("");
       }
 
-      window.addEventListener("hashchange", render);
-      window.addEventListener("hashchange", closeMenu);
+      window.addEventListener("popstate", (e) => {
+        currentPage = (e.state && e.state.page) || "group";
+        closeMenu();
+        render();
+      });
       render();
     </script>
   </body>
