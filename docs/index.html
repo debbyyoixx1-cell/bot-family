@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bot Family — Telegram Groups, Channels &amp; Bots</title>
+    <meta
+      name="description"
+      content="Bot Family hub: join our Telegram groups and channels, and start our music, reply and utility bots."
+    />
+    <meta property="og:title" content="Bot Family — Telegram Groups, Channels &amp; Bots" />
+    <meta
+      property="og:description"
+      content="Join Bot Family Telegram groups and channels, and start our bots."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="referrer" content="no-referrer" />
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://telegram.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors https://web.telegram.org https://*.telegram.org"
+    />
+    <link rel="icon" href="favicon.ico" />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+      :root {
+        --ink: #fff;
+        --frame: rgba(255, 255, 255, 0.18);
+        --item: rgba(214, 68, 40, 0.62);
+        --item-border: rgba(196, 40, 26, 0.85);
+        --action: rgba(88, 52, 132, 0.62);
+        --action-border: rgba(50, 70, 200, 0.9);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        padding: 16px 12px 48px;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--ink);
+        background: url("assets/wood-bg.jpg") center / cover repeat-y;
+      }
+      .sign {
+        position: fixed;
+        left: 50%;
+        top: 33%;
+        width: 85%;
+        max-width: 420px;
+        transform: translateX(-50%) rotate(-62deg);
+        opacity: 0.9;
+        pointer-events: none;
+        user-select: none;
+        z-index: 0;
+      }
+      header,
+      main {
+        position: relative;
+        z-index: 1;
+        max-width: 460px;
+        margin: 0 auto;
+      }
+      h1 {
+        margin: 0;
+        font-size: 34px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      }
+      .panel {
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        background: var(--frame);
+        border-radius: 16px;
+        backdrop-filter: blur(1px);
+      }
+      .title {
+        padding: 14px;
+        text-align: center;
+        margin-bottom: 12px;
+      }
+      nav ul {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        list-style: none;
+        margin: 0;
+        padding: 8px;
+      }
+      nav button {
+        display: block;
+        width: 100%;
+        padding: 10px 4px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 14px;
+        font-family: inherit;
+        color: var(--ink);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 12px;
+        background: transparent;
+        cursor: pointer;
+      }
+      nav button:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      nav button.active {
+        background: rgba(255, 255, 255, 0.28);
+      }
+      main {
+        margin-top: 24px;
+      }
+      .row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 16px;
+        align-items: stretch;
+      }
+      .row .name {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        font-family: system-ui, sans-serif;
+        font-weight: 600;
+        border: 1px solid var(--item-border);
+        background: var(--item);
+        border-radius: 12px;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      }
+      .row .btn {
+        width: 112px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--ink);
+        text-decoration: none;
+        border: 2px solid var(--action-border);
+        background: var(--action);
+        border-radius: 12px;
+      }
+      .row .btn:active {
+        transform: scale(0.96);
+      }
+      .hidden {
+        display: none;
+      }
+      .menu-wrap {
+        position: absolute;
+        left: 12px;
+        top: 14px;
+        z-index: 30;
+      }
+      .menu-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 66px;
+        height: 44px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        background: var(--frame);
+        border-radius: 12px;
+        cursor: pointer;
+      }
+      .menu-btn span {
+        display: block;
+        width: 32px;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--ink);
+      }
+      .menu-list {
+        margin-top: 8px;
+        width: 220px;
+        display: grid;
+        gap: 8px;
+      }
+      .menu-list.hidden {
+        display: none;
+      }
+      .menu-list button {
+        display: block;
+        width: 100%;
+        padding: 10px 14px;
+        text-align: center;
+        font-weight: 700;
+        font-family: inherit;
+        color: #000;
+        background: #fff;
+        border: 2px solid #000;
+        border-radius: 999px;
+        cursor: pointer;
+      }
+      .profile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding-top: 24px;
+      }
+      .profile .avatar {
+        width: 176px;
+        height: 176px;
+        border-radius: 50%;
+        border: 4px solid rgba(255, 255, 255, 0.9);
+        object-fit: cover;
+        background: rgba(255, 255, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+      }
+      .profile .field {
+        width: 100%;
+        padding: 16px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 700;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        background: var(--frame);
+        border-radius: 16px;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        background: var(--frame);
+        border-radius: 18px;
+        text-decoration: none;
+        color: var(--ink);
+        backdrop-filter: blur(1px);
+      }
+      .card:active {
+        transform: scale(0.96);
+      }
+      .card img {
+        width: 104px;
+        height: 104px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(255, 255, 255, 0.9);
+      }
+      .card span {
+        display: block;
+        width: 100%;
+        padding: 9px 4px;
+        text-align: center;
+        font-family: system-ui, sans-serif;
+        font-weight: 800;
+        font-size: 16px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #35d0e8, #6f5bf0, #d94ce0);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+      }
+      .post {
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        background: var(--frame);
+        border-radius: 18px;
+        backdrop-filter: blur(1px);
+      }
+      .post .post-img {
+        width: 100%;
+        border-radius: 14px;
+        display: block;
+      }
+      .post .post-text {
+        margin: 14px 4px;
+        font-size: 17px;
+        line-height: 1.7;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        white-space: pre-line;
+      }
+    </style>
+  </head>
+  <body>
+    <img class="sign" src="assets/sign.png" alt="" aria-hidden="true" />
+
+    <div class="menu-wrap">
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menuList">
+        <span></span><span></span>
+      </button>
+      <div class="menu-list hidden" id="menuList">
+        <button type="button" data-page="group">Home</button>
+        <button type="button" data-page="profile">My Profile</button>
+        <button type="button" data-page="post">Post</button>
+      </div>
+    </div>
+
+    <header>
+      <div class="panel title" id="pageTitle" hidden><h1></h1></div>
+      <nav class="panel" id="mainNav" aria-label="Main">
+        <ul>
+          <li><button type="button" data-page="group" data-tab="group">Group</button></li>
+          <li><button type="button" data-page="channel" data-tab="channel">Channel</button></li>
+          <li><button type="button" data-page="bot" data-tab="bot">Bot</button></li>
+          <li><button type="button" data-page="contact" data-tab="contact">Contact</button></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="list"></main>
+
+    <script>
+      const data = {
+        group: {
+          title: "Group",
+          action: "Join",
+          items: [
+            { name: "Heartopia", href: "https://t.me/HeartopiaGroups" },
+            { name: "The Bot bar family", href: "https://t.me/Cherry_Ko_official" },
+            { name: "My Day Family", href: "https://t.me/MyDayFamily" },
+            { name: "𝟏𝟖+ 𝐒𝐩𝐢𝐜𝐲 𝐋𝐨𝐮𝐧𝐠𝐞", href: "https://t.me/+KFwS9r5lR5E3NGFl" },
+          ],
+        },
+        channel: {
+          title: "Channel",
+          action: "Join",
+          items: [
+            { name: "𝐆𝐫𝐨𝐮𝐩 𝐒𝐡𝐨𝐩 & 𝐀𝐝𝐬 𝐏𝐨𝐬𝐭", href: "https://t.me/+g5K2qSQ23rVjZDVl" },
+            { name: "Bot family", href: "https://t.me/Bots_Family2026" },
+            { name: "New Friends For You", href: "https://t.me/NewFriendsForYou" },
+            { name: "စာပေချစ်သူများဆုံစည်းရာ", href: "https://t.me/allcar_Myanmar59" },
+            { name: "Character Capture", href: "https://t.me/Character_Capture_mm" },
+          ],
+        },
+        bot: {
+          title: "Bot",
+          action: "Start",
+          items: [
+            ["Cherry Ko Music Bot", "CherryKoMusicBot"],
+            ["Cherry Ko Reply Bot", "Cherry_KoBot"],
+            ["Debby yoixx Reply Bot", "Debby_YoixxBot"],
+            ["Victoria Reply Bot", "Victoria_MMBot"],
+            ["Dorothy Reply Bot", "Dorothy_Ai2026Bot"],
+            ["New Friends For You Bot", "leomatch_globalbot"],
+            ["Yoon May 18+ Chat Girl Bot", "YoonMayReplyBot"],
+            ["Spam Wiper Bot", "SpamWiper_bot"],
+            ["Emery Reply Bot", "Emery_AiBot"],
+            ["Thae Su Nyein Reply", "ThaeSuNyein_AiBot"],
+            ["Erica Reply Bot", "Erica_1Bot"],
+            ["Keira Reply Bot", "Keira_2026Bot"],
+            ["Nina Ko Reply Bot", "Nina_Ko_Bot"],
+            ["Htet Htet Aung Reply Bot", "Htet_Htet_AungReplyBot"],
+            ["Yoon Yoon", "Yoon_NgeReplyBot"],
+            ["Khint Reply Bot", "KhintReplyBot"],
+            ["May Thu Linn", "May_Thu_LinnReplyBot"],
+            ["Chaw Su Reply Bot", "Chaw_SuReplyBot"],
+            ["Myat Noe Reply Bot", "Myat_NoeReplyBot"],
+            ["Stitch Reply Bot", "StitchReplyBot"],
+            ["Vick Reply Bot", "VickreplyBot"],
+          ].map(([name, u]) => ({ name, href: "https://t.me/" + u + "?start=start" })),
+        },
+        contact: {
+          title: "Contact",
+          cards: true,
+          items: [
+            ["Debby Yoixx", "Debby_Yoixx", "debby"],
+            ["THU THU", "HsuDarlilinn", "thu"],
+            ["Stitch", "stitch_n0_counter", "stitch"],
+            ["NeKo", "Kick997", "neko"],
+            ["Cherry Ko", "CherryKoOfficial", "cherry"],
+            ["Myat Phone", "Myat7876", "myat"],
+            ["XM \u2022| Zain", "Zain_Coner", "zain"],
+            ["မဂ္ဂဒီပါ", "user?id=8058668561", "magga"],
+            ["Nina Ko", "Paing_thuta", "nina"],
+            ["Oli", "OLI_Angel", "oli"],
+            ["တီးဆရာ", "daddyofjune", "tee"],
+          ].map(([name, u, img]) => ({
+            name,
+            href: "https://t.me/" + u,
+            img: "assets/contacts/" + img + ".jpg",
+          })),
+        },
+      };
+
+      const menuBtn = document.getElementById("menuBtn");
+      const menuList = document.getElementById("menuList");
+      const menuWrap = document.querySelector(".menu-wrap");
+      menuBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isHidden = menuList.classList.toggle("hidden");
+        menuBtn.setAttribute("aria-expanded", String(!isHidden));
+      });
+      function closeMenu() {
+        menuList.classList.add("hidden");
+        menuBtn.setAttribute("aria-expanded", "false");
+      }
+      document.addEventListener("click", (e) => {
+        if (!menuWrap.contains(e.target)) closeMenu();
+      });
+
+      const tg = window.Telegram && window.Telegram.WebApp;
+      if (tg) {
+        try {
+          tg.ready();
+          tg.expand();
+        } catch (e) {}
+      }
+
+      // Open Telegram (t.me / tg://) links directly inside Telegram instead of
+      // showing the "Open Link" confirmation sheet that exposes the full URL.
+      function openTelegramLink(href) {
+        if (tg && typeof tg.openTelegramLink === "function") {
+          tg.openTelegramLink(href);
+        } else {
+          window.open(href, "_blank", "noopener,noreferrer");
+        }
+      }
+      document.addEventListener("click", (e) => {
+        var pageButton = e.target.closest && e.target.closest("button[data-page]");
+        if (pageButton) {
+          e.preventDefault();
+          e.stopPropagation();
+          currentPage = pageButton.dataset.page || "group";
+          history.replaceState({ page: currentPage }, "", location.pathname + location.search);
+          closeMenu();
+          render();
+          return;
+        }
+        var a = e.target.closest && e.target.closest("a");
+        if (!a) return;
+        var href = a.getAttribute("href") || "";
+        if (href.indexOf("https://t.me/") === 0 || href.indexOf("tg://") === 0) {
+          e.preventDefault();
+          e.stopPropagation();
+          openTelegramLink(href);
+        }
+      });
+
+      // Disable long-press link previews and image dragging inside the Mini App.
+      document.addEventListener("contextmenu", (e) => e.preventDefault());
+      document.addEventListener("dragstart", (e) => e.preventDefault());
+
+      function renderProfile(list) {
+        const u = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || null;
+        const name = u ? [u.first_name, u.last_name].filter(Boolean).join(" ") : "name";
+        const username = u && u.username ? "@" + u.username : "username";
+        const id = u && u.id ? String(u.id) : "id";
+        const avatar =
+          u && u.photo_url
+            ? '<img class="avatar" src="' + u.photo_url + '" alt="' + name + '">'
+            : '<div class="avatar">Profile photo</div>';
+        list.innerHTML =
+          '<div class="profile">' +
+          avatar +
+          '<div class="field">' + name + "</div>" +
+          '<div class="field">' + username + "</div>" +
+          '<div class="field">' + id + "</div>" +
+          (u ? "" : '<p style="text-align:center">Open this page from Telegram to see your profile.</p>') +
+          "</div>";
+      }
+
+      const POST_TEXT =
+        "ကြော်ငြာလက်ခံပါတယ်။\n\nအားလုံးအဆင်ပြေစေရန် ဈေးသက်သက်သာသာနဲ့ကြော်ငြာအပ်နိုင်ပါတယ်နော်.....။\n\nလပြတ် = 𝟑𝟎,𝟎𝟎𝟎 ကျပ် တစ်နေ့ 𝟏 ကြိမ် \n\nတစ်နေ့ 𝟏 ကြိမ်  = 𝟓,𝟎𝟎𝟎 ကျပ် \n\n𝐀𝐮𝐭𝐨 𝐑𝐞𝐩𝐥𝐲 𝟏 + 𝐌𝐮𝐬𝐢𝐜 𝐁𝐨𝐭 𝟏 \n\nBot နှစ်မျိုးလုံး နဲ့ ကြော်ငြာပေးမှာဖြစ်လို့ အခုပဲကျွန်တော်တို့ကို အမြန်ဆက်သွယ်လိုက်ပါ။\n\n• ကံစမ်းမဲပွဲ ဖိတ်စာ\n• လူတောင်းပွဲ ဖိတ်စာ\n• မြှားနတ်မောင် ဖိတ်စာများ\n• Game Shop\n\nကြော်ငြာအပ်ရန် \n@CherryKoOfficial ဆက်သွယ်ပေးပါ။\n\n𝐂𝐡𝐞𝐫𝐫𝐲 𝐊𝐨 𝐌𝐮𝐬𝐢𝐜 𝐁𝐨𝐭 \n@CherryKoMusicBot\n\n𝐂𝐡𝐞𝐫𝐫𝐲 𝐊𝐨 𝐑𝐞𝐩𝐥𝐲 𝐁𝐨𝐭 \n@Cherry_KoBot";
+      function renderPost(list) {
+        list.innerHTML =
+          '<div class="post">' +
+          '<img class="post-img" src="assets/post/post-group.jpg" alt="Telegram Group">' +
+          '<p class="post-text">' + POST_TEXT + "</p>" +
+          "</div>";
+      }
+
+      const initialHash = location.hash.replace("#", "");
+      let currentPage = data[initialHash] || initialHash === "profile" || initialHash === "post" ? initialHash : "group";
+      if (location.hash) history.replaceState({ page: currentPage }, "", location.pathname + location.search);
+
+      function render() {
+        const key = currentPage;
+        const list = document.getElementById("list");
+        const titleBox = document.getElementById("pageTitle");
+        const mainNav = document.getElementById("mainNav");
+        if (key === "post") {
+          mainNav.classList.add("hidden");
+          titleBox.hidden = false;
+          titleBox.querySelector("h1").textContent = "Post";
+          document.title = "Post — Bot Family";
+          renderPost(list);
+          return;
+        }
+        if (key === "profile") {
+          mainNav.classList.add("hidden");
+          titleBox.hidden = true;
+          document.title = "My Profile — Bot Family";
+          renderProfile(list);
+          return;
+        }
+        mainNav.classList.remove("hidden");
+        document
+          .querySelectorAll("nav button")
+          .forEach((a) => a.classList.toggle("active", a.dataset.tab === key));
+
+        const page = data[key];
+        if (!page) {
+          titleBox.hidden = true;
+          list.innerHTML = "";
+          return;
+        }
+        titleBox.hidden = false;
+        titleBox.querySelector("h1").textContent = page.title;
+        document.title = page.title + " — Bot Family";
+        if (page.cards) {
+          list.innerHTML =
+            '<div class="cards">' +
+            page.items
+              .map(
+                (i) =>
+                  '<a class="card" target="_blank" rel="noopener noreferrer" href="' +
+                  i.href +
+                  '"><img loading="lazy" src="' +
+                  i.img +
+                  '" alt="' +
+                  i.name +
+                  '"><span>' +
+                  i.name +
+                  "</span></a>",
+              )
+              .join("") +
+            "</div>";
+          return;
+        }
+        list.innerHTML = page.items
+          .map(
+            (i) =>
+              '<div class="row"><div class="name">' +
+              i.name +
+              '</div><a class="btn" target="_blank" rel="noopener noreferrer" href="' +
+              i.href +
+              '">' +
+              page.action +
+              "</a></div>",
+          )
+          .join("");
+      }
+
+      window.addEventListener("popstate", (e) => {
+        currentPage = (e.state && e.state.page) || "group";
+        closeMenu();
+        render();
+      });
+      render();
+    </script>
+  </body>
+</html>
