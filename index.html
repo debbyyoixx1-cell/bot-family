@@ -19,7 +19,7 @@
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://telegram.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors https://web.telegram.org https://*.telegram.org"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://telegram.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src https://telegram-music-buddy.lovable.app; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors https://web.telegram.org https://*.telegram.org"
     />
     <link rel="icon" href="favicon.ico" />
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -476,6 +476,45 @@
       let currentPage = data[initialHash] || initialHash === "profile" || initialHash === "post" ? initialHash : "group";
       if (location.hash) history.replaceState({ page: currentPage }, "", location.pathname + location.search);
 
+      // Live bot list: bots that are admins in the Bot Family channel, fetched
+      // through our backend (the bot token never reaches this page).
+      const API_BASE = "https://telegram-music-buddy.lovable.app";
+      let liveBots = null;
+      function esc(s) {
+        return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+      }
+      fetch(API_BASE + "/api/public/telegram/bots")
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j) => {
+          if (j && Array.isArray(j.bots) && j.bots.length) {
+            liveBots = j.bots;
+            if (currentPage === "bot") render();
+          }
+        })
+        .catch(() => {});
+
+      function renderLiveBots(list) {
+        list.innerHTML =
+          '<div class="cards">' +
+          liveBots
+            .map((b) => {
+              const img = b.photo
+                ? '<img loading="lazy" src="' + API_BASE + esc(b.photo) + '" alt="' + esc(b.name) + '">'
+                : '<img loading="lazy" src="assets/contacts/default.jpg" alt="" style="display:none">';
+              return (
+                '<a class="card" target="_blank" rel="noopener noreferrer" href="' +
+                esc(b.url || "#") +
+                '">' +
+                img +
+                "<span>" +
+                esc(b.name) +
+                "</span></a>"
+              );
+            })
+            .join("") +
+          "</div>";
+      }
+
       function render() {
         const key = currentPage;
         const list = document.getElementById("list");
@@ -505,6 +544,13 @@
         if (!page) {
           titleBox.hidden = true;
           list.innerHTML = "";
+          return;
+        }
+        if (key === "bot" && liveBots) {
+          titleBox.hidden = false;
+          titleBox.querySelector("h1").textContent = page.title;
+          document.title = page.title + " — Bot Family";
+          renderLiveBots(list);
           return;
         }
         titleBox.hidden = false;
